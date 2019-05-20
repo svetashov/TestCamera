@@ -1,29 +1,29 @@
 package com.example.user.testcamera;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
-
 
 public class Post {
 
-    @SerializedName("message")
-    @Expose
     private String message;
+    private int[][] matrix;
 
+    public Post(String message, int[][] array) {
+        this.message = message;
+        this.matrix = array;
+    }
 
     public String getMessage() {
         return message;
+    }
+
+    public int[][] getMatrix() {
+        return matrix;
     }
 
     public void setMessage(String message) {
         this.message = message;
     }
 
-
-    @Override
-    public String toString() {
-        return "Post{" +
-                ", message='" + message + '\'' +
-                '}';
+    public void setMatrix(int[][] matrix) {
+        this.matrix = matrix;
     }
 }

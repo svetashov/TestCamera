@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     static final int REQUEST_TAKE_PHOTO = 1;
 
     private TextView mResponseTv;
-    private APIService mAPIService;
+    private APIService service;
 
     ImageView imageView;
     Button capture;
@@ -47,9 +48,23 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             //dispatchTakePictureIntent();
-            Post post = new Post();
-            post.setMessage("Hello zalypa ebanaya");
-            sendPost(post);
+            int[][] matrix = {{1, 2}, {3, 4}};
+            Post post = new Post("Hello world", matrix);
+            Call<Post> call = service.sendPost(post);
+            call.enqueue(new Callback<Post>() {
+                @Override
+                public void onResponse(Call<Post> call, Response<Post> response) {
+                    if (response.body() != null)
+                        Toast.makeText(getBaseContext(),String.valueOf(response.body().getMatrix()[0][1]),Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(getBaseContext(),"ERROR: Body is empty",Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onFailure(Call<Post> call, Throwable t) {
+                    Toast.makeText(getBaseContext(),t.getMessage(),Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     };
 
@@ -62,29 +77,12 @@ public class MainActivity extends AppCompatActivity {
         imageView = findViewById(R.id.imageViewPhoto);
         capture = findViewById(R.id.buttonCapture);
         mResponseTv = findViewById(R.id.textView);
-        mAPIService = ApiUtils.getAPIService();
+
+        service = ApiUtils.getAPIService();
         capture.setOnClickListener(captureListener);
 
     }
 
-    public void sendPost(Post post) {
-
-        mAPIService.savePost(post).enqueue(new Callback<Post>() {
-            @Override
-            public void onResponse(Call<Post> call, Response<Post> response) {
-
-                if(response.isSuccessful()) {
-                    showResponse(response.body().toString());
-                    Log.i("SUCCESS", "post submitted to API." + response.body().toString());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Post> call, Throwable t) {
-                Log.e("FAILURE", "Unable to submit post to API."+t.getMessage() );
-            }
-        });
-    }
 
     public void showResponse(String response) {
         if(mResponseTv.getVisibility() == View.GONE) {

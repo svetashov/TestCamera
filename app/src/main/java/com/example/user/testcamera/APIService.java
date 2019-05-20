@@ -7,7 +7,7 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.POST;
 
 public interface APIService {
-    @POST("/http_test")
+    @POST("/image_processing")
     //@FormUrlEncoded
-    Call<Post> savePost(@Body Post post);
+    Call<Post> sendPost(@Body Post body);
 }
